@@ -1,6 +1,6 @@
 package com.example.danieljackson.flickr_findr.dagger;
 
-import com.example.danieljackson.flickr_findr.data.FlickrApi;
+import com.example.danieljackson.flickr_findr.data.network.FlickrApi;
 
 import org.mockito.Mockito;
 

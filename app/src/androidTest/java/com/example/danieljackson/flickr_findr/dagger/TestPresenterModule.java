@@ -1,13 +1,19 @@
 package com.example.danieljackson.flickr_findr.dagger;
 
 
-import com.example.danieljackson.flickr_findr.dagger.PresenterModule;
+import com.example.danieljackson.flickr_findr.data.interactor.search.SearchInteractor;
+import com.example.danieljackson.flickr_findr.system.SystemLogger;
+import com.example.danieljackson.flickr_findr.ui.search.presenter.SearchPresenter;
 
-import javax.inject.Singleton;
+import org.mockito.Mockito;
 
-import dagger.Module;
-
-@Singleton
-@Module
 public class TestPresenterModule extends PresenterModule {
+
+    //Work around to get singleton for testing
+    private static SearchPresenter searchPresenter = Mockito.mock(SearchPresenter.class);
+
+    @Override
+    public SearchPresenter searchPresenter(SearchInteractor searchInteractor, SystemLogger systemLogger) {
+        return searchPresenter;
+    }
 }

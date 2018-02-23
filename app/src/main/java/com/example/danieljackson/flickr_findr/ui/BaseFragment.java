@@ -8,14 +8,10 @@ import android.view.ViewGroup;
 
 import com.metova.slim.Slim;
 
-import butterknife.ButterKnife;
-
 public class BaseFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = Slim.createLayout(getActivity(), this, container);
-        ButterKnife.bind(view);
-        return view;
+        return Slim.createLayout(getActivity(), this, container);
     }
 }

@@ -8,7 +8,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.example.danieljackson.flickr_findr.DaggerTestRunner"
     }
     buildTypes {
         release {
@@ -53,9 +53,13 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.14.1'
     androidTestAnnotationProcessor 'com.google.dagger:dagger-compiler:2.14.1'
 
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.6.1'
 
     compile 'com.metova:slim:1.2'
 
+    compile 'com.androidadvance:topsnackbar:1.1.1'
+
+    testCompile "org.mockito:mockito-core:2.15.0"
     androidTestCompile "org.mockito:mockito-android:2.15.0"
 }
