@@ -30,6 +30,7 @@ public class DataModule {
     private static final String JSON = "json";
 
     @Provides
+    @Singleton
     public FlickrApi providesFlickrApi() {
 
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
@@ -57,6 +58,7 @@ public class DataModule {
     }
 
     @Provides
+    @Singleton
     public SearchInteractor providesSearchInteractor(FlickrApi flickrApi, SystemLogger systemLogger) {
         return new SearchInteractorImpl(providesFlickrApi(), systemLogger, Schedulers.io());
     }

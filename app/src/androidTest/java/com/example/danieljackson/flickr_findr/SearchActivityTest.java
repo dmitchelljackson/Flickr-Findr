@@ -1,6 +1,7 @@
 package com.example.danieljackson.flickr_findr;
 
 import android.content.Intent;
+import android.support.test.filters.FlakyTest;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -78,6 +79,8 @@ public class SearchActivityTest extends BaseTestCase {
     }
 
     @Test
+    //TODO find a way to test transient snackbar without flaky test
+    @FlakyTest
     public void testShowEmptyResults() throws InterruptedException {
         activityRule.getActivity().runOnUiThread(() -> argumentCaptor.getValue().showEmptyResults());
         Thread.sleep(100);
@@ -86,6 +89,8 @@ public class SearchActivityTest extends BaseTestCase {
     }
 
     @Test
+    //TODO find a way to test transient snackbar without flaky test
+    @FlakyTest
     public void testShowLoadErrorResults() throws InterruptedException {
         activityRule.getActivity().runOnUiThread(() -> argumentCaptor.getValue().showLoadError());
         Thread.sleep(100);

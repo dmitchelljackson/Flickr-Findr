@@ -1,5 +1,6 @@
 package com.example.danieljackson.flickr_findr.ui.search;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 
 import com.androidadvance.topsnackbar.TSnackbar;
 import com.example.danieljackson.flickr_findr.FlickrFindrApp;
@@ -30,7 +32,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 @Layout(R.layout.fragment_search)
-public class SearchFragment extends BaseFragment implements SearchPresenter.Callback{
+public class SearchFragment extends BaseFragment implements SearchPresenter.Callback {
 
     private static final String TAG = SearchFragment.class.getSimpleName();
 
@@ -73,7 +75,13 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
         ((BaseActivity) getActivity()).setSupportActionBar(toolbar);
 
         initRecyclerView();
-        initSearchView();
+        initSearchView(savedInstanceState);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(String.valueOf(R.id.search_view), searchView.getQuery().toString());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -82,13 +90,27 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
         searchPresenter.stop();
     }
 
-    private void initSearchView() {
+    private void initSearchView(Bundle bundle) {
+
+        if (bundle != null) {
+            String previousQuery = bundle.getString(String.valueOf(R.id.search_view));
+            if (previousQuery == null || previousQuery.isEmpty()) {
+                setDefaultState();
+            } else {
+                searchView.setQuery(previousQuery, false);
+            }
+        }
+
         searchView.setQueryHint(getActivity().getString(R.string.search_images));
+        searchView.setIconified(false);
+        searchView.setOnCloseListener(() -> true);
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchPresenter.onSearchCompleted(query);
+                closeKeyboard(searchView);
                 return true;
             }
 
@@ -98,9 +120,6 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
                 return false;
             }
         });
-
-        searchView.setIconified(false);
-        searchView.setOnCloseListener(() -> true);
     }
 
     private void initRecyclerView() {
@@ -151,5 +170,12 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
     public void setDefaultState() {
         systemLogger.d(TAG, "Showing Default State");
         recyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    private void closeKeyboard(View view) {
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

@@ -12,7 +12,9 @@ public class SearchActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        getSupportFragmentManager().beginTransaction().replace(
-                R.id.frame, new SearchFragment(), SearchFragment.class.getSimpleName()).commit();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(
+                    R.id.frame, new SearchFragment(), SearchFragment.class.getSimpleName()).commit();
+        }
     }
 }

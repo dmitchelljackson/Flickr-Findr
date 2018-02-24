@@ -15,7 +15,7 @@ public class Photos {
 
     private int total;
 
-    private String searchString;
+    private String searchString = "";
 
     @SerializedName("photo")
     private List<Photo> photos;

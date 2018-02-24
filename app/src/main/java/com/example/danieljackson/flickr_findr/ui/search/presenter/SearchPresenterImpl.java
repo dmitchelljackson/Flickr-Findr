@@ -25,6 +25,7 @@ public class SearchPresenterImpl implements SearchPresenter {
         this.searchInteractor = searchInteractor;
         this.systemLogger = systemLogger;
         this.mainScheduler = mainScheduler;
+        callback = new EmptyCallback();
     }
 
     @Override
@@ -33,13 +34,13 @@ public class SearchPresenterImpl implements SearchPresenter {
         this.callback = callback;
 
         searchInteractor.getPhotoStream().observeOn(mainScheduler).subscribe(photos -> {
-           if(photos.isLoadError()) {
-               this.callback.showLoadError();
-           } else if(photos.getPhotos().isEmpty()) {
-               this.callback.showEmptyResults();
-           } else {
-               this.callback.showList(photos);
-           }
+            if (photos.isLoadError()) {
+                this.callback.showLoadError();
+            } else if (photos.getPhotos().isEmpty()) {
+                this.callback.showEmptyResults();
+            } else {
+                this.callback.showList(photos);
+            }
         });
     }
 
@@ -51,6 +52,7 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     @Override
     public void onSearchUpdated(String searchText) {
+
         if (!searchText.isEmpty()) {
             callback.setLoading();
             searchInteractor.sendNewQuery(searchText);
