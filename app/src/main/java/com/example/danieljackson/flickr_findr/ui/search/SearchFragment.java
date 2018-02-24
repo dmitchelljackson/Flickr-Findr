@@ -9,7 +9,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -23,6 +22,7 @@ import com.example.danieljackson.flickr_findr.data.network.model.Photos;
 import com.example.danieljackson.flickr_findr.system.SystemLogger;
 import com.example.danieljackson.flickr_findr.ui.BaseActivity;
 import com.example.danieljackson.flickr_findr.ui.BaseFragment;
+import com.example.danieljackson.flickr_findr.ui.Router;
 import com.example.danieljackson.flickr_findr.ui.search.presenter.SearchPresenter;
 import com.metova.slim.annotation.Layout;
 
@@ -34,7 +34,7 @@ import butterknife.ButterKnife;
 @Layout(R.layout.fragment_search)
 public class SearchFragment extends BaseFragment implements SearchPresenter.Callback {
 
-    private static final String TAG = SearchFragment.class.getSimpleName();
+    public static final String TAG = SearchFragment.class.getSimpleName();
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -62,15 +62,9 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        ButterKnife.bind(this, view);
-        return view;
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
 
         ((BaseActivity) getActivity()).setSupportActionBar(toolbar);
 
@@ -123,7 +117,7 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
     }
 
     private void initRecyclerView() {
-        photosAdapter = new PhotosAdapter();
+        photosAdapter = new PhotosAdapter((Router) getActivity());
 
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {

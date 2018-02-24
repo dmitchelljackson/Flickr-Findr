@@ -8,7 +8,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.example.danieljackson.flickr_findr.data.network.model.Photo;
 import com.example.danieljackson.flickr_findr.data.network.model.Photos;
-import com.example.danieljackson.flickr_findr.ui.search.SearchActivity;
+import com.example.danieljackson.flickr_findr.ui.MainActivity;
 import com.example.danieljackson.flickr_findr.ui.search.presenter.SearchPresenter;
 
 import org.junit.Before;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class SearchActivityTest extends BaseTestCase {
+public class MainActivityTest extends BaseTestCase {
 
     private static final int TEST_PAGE_NUMBER = 0;
     private static final int TEST_NUMBER_PERPAGE = 25;
@@ -53,8 +53,8 @@ public class SearchActivityTest extends BaseTestCase {
     SearchPresenter searchPresenter;
 
     @Rule
-    public ActivityTestRule<SearchActivity> activityRule =
-            new ActivityTestRule(SearchActivity.class, false,false);
+    public ActivityTestRule<MainActivity> activityRule =
+            new ActivityTestRule(MainActivity.class, false,false);
 
     @Before
     public void setUp() {

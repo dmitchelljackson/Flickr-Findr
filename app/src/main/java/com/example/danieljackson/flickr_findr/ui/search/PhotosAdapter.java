@@ -14,6 +14,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.danieljackson.flickr_findr.R;
 import com.example.danieljackson.flickr_findr.data.network.model.Photo;
 import com.example.danieljackson.flickr_findr.data.network.model.Photos;
+import com.example.danieljackson.flickr_findr.ui.Router;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,9 +25,13 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
 
     private ViewGroup.LayoutParams layoutParams;
 
-    public PhotosAdapter() {
+    private Router router;
+
+    public PhotosAdapter(Router router) {
         this.photos = new Photos();
         layoutParams = new ViewGroup.LayoutParams(0,0);
+
+        this.router = router;
     }
 
     @Override
@@ -48,7 +53,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (holder instanceof LoadingViewHolder) {
-            //no op
+            ((LoadingViewHolder) holder).clickView.setClickable(false);
         } else {
             PhotoViewHolder photoViewHolder = (PhotoViewHolder) holder;
             Photo photo = getPhotoAt(position);
@@ -64,6 +69,8 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
                     .apply(new RequestOptions().centerCrop())
                     .thumbnail(thumbnailRequest)
                     .into(photoViewHolder.photoImageView);
+
+            photoViewHolder.clickView.setOnClickListener( view -> router.loadPhotoViewerFragment(photo));
         }
     }
 
@@ -106,8 +113,12 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
 
     public static class LoadingViewHolder extends PhotosAdapter.ViewHolder {
 
+        @BindView(R.id.click_view)
+        View clickView;
+
         public LoadingViewHolder(View view) {
             super(view);
+            ButterKnife.bind(this, view);
         }
     }
 
@@ -118,6 +129,9 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
 
         @BindView(R.id.background_photo)
         ImageView photoImageView;
+
+        @BindView(R.id.click_view)
+        View clickView;
 
         public PhotoViewHolder(View view) {
             super(view);

@@ -12,6 +12,7 @@ public class BaseFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Slim.injectExtras(getArguments(), this);
         return Slim.createLayout(getActivity(), this, container);
     }
 }
