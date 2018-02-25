@@ -11,7 +11,8 @@ public class Photos {
 
     private int page;
 
-    private int perpage;
+    @SerializedName("perpage")
+    private int perPage;
 
     private int total;
 
@@ -27,9 +28,9 @@ public class Photos {
         this.loadError = loadError;
     }
 
-    public Photos(int page, int perpage, int total, List<Photo> photos) {
+    public Photos(int page, int perPage, int total, List<Photo> photos) {
         this.page = page;
-        this.perpage = perpage;
+        this.perPage = perPage;
         this.total = total;
         this.photos = photos;
     }
@@ -38,8 +39,8 @@ public class Photos {
         return page;
     }
 
-    public int getPerpage() {
-        return perpage;
+    public int getPerPage() {
+        return perPage;
     }
 
     public int getTotal() {
@@ -62,6 +63,10 @@ public class Photos {
         this.photos = photos;
     }
 
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,7 +76,7 @@ public class Photos {
 
         if (loadError != photos1.loadError) return false;
         if (page != photos1.page) return false;
-        if (perpage != photos1.perpage) return false;
+        if (perPage != photos1.perPage) return false;
         if (total != photos1.total) return false;
 
         return photos != null ? photos.equals(photos1.photos) : photos1.photos == null;
@@ -81,7 +86,7 @@ public class Photos {
     public int hashCode() {
         int result = (loadError ? 1 : 0);
         result = 31 * result + page;
-        result = 31 * result + perpage;
+        result = 31 * result + perPage;
         result = 31 * result + total;
         result = 31 * result + (photos != null ? photos.hashCode() : 0);
         return result;

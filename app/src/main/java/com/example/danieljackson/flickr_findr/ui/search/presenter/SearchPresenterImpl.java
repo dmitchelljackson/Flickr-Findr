@@ -54,7 +54,13 @@ public class SearchPresenterImpl implements SearchPresenter {
             return photos;
         }).observeOn(mainScheduler).subscribe(photos -> {
             currentPage = photos.getPage();
-            totalPagesInQuery = photos.getTotal();
+            if(photos.getPerPage() == 0) {
+                totalPagesInQuery = 0;
+            } else if(photos.getTotal() % photos.getPerPage() != 0) {
+                totalPagesInQuery = (photos.getTotal() / photos.getPerPage()) + 1;
+            } else {
+                totalPagesInQuery = photos.getTotal() / photos.getPerPage();
+            }
             isLoading = false;
             if (photos.isLoadError()) {
                 this.callback.showLoadError();
@@ -101,6 +107,7 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Override
     public void onLoadMorePhotos() {
         if (!isLoading) {
+            isLoading = true;
             searchInteractor.sendNewQuery(currentQuery, currentPage + 1);
         }
     }

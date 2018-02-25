@@ -1,6 +1,7 @@
 package com.example.danieljackson.flickr_findr;
 
 import android.content.Intent;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.filters.FlakyTest;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -107,6 +108,14 @@ public class MainActivityTest extends BaseTestCase {
         onView(withText(TEST_PHOTO_TITLE + 1)).check(matches(isDisplayed()));
         onView(withText(TEST_PHOTO_TITLE + 2)).check(matches(isDisplayed()));
         onView(withId(R.id.progress)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testPhotoClick() throws InterruptedException {
+        activityRule.getActivity().runOnUiThread(() -> argumentCaptor.getValue().showList(getTestPhotos()));
+        Thread.sleep(100);
+        onView(withText(TEST_PHOTO_TITLE + 0)).perform(ViewActions.click());
+        onView(withId(R.id.photo_view)).check(matches(isDisplayed()));
     }
 
     public static Photos getTestPhotos() {

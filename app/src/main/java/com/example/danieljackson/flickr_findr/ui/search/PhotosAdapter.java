@@ -102,7 +102,7 @@ public class PhotosAdapter extends RecyclerView.Adapter<PhotosAdapter.ViewHolder
     }
 
     private boolean canLoadMorePhotos() {
-        return photos.getPhotos().isEmpty() || photos.getPage() * photos.getPerpage() < photos.getTotal();
+        return photos.getPhotos().isEmpty() || photos.getPage() * photos.getPerPage() < photos.getTotal();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

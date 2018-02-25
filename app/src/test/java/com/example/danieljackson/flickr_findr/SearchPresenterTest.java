@@ -13,6 +13,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import static com.example.danieljackson.flickr_findr.SearchInteractorTest.TEST_SEARCH_STRING;
 import static com.example.danieljackson.flickr_findr.SearchInteractorTest.getTestPhotos;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -85,6 +86,47 @@ public class SearchPresenterTest {
     public void testPhotosReceived() {
         testRelay.accept(getTestPhotos());
         verify(callback).showList(eq(getTestPhotos()));
+    }
+
+    @Test
+    public void testOnLoadMorePhotosNotLoading() {
+        searchPresenter.onSearchCompleted(TEST_SEARCH_STRING);
+        testRelay.accept(getTestPhotos());
+        searchPresenter.onLoadMorePhotos();
+        verify(searchInteractor).sendNewQuery(eq(TEST_SEARCH_STRING), eq(2));
+    }
+
+    @Test
+    public void testOnLoadMorePhotosLoading() {
+        searchPresenter.onSearchCompleted(TEST_SEARCH_STRING);
+        searchPresenter.onLoadMorePhotos();
+        verify(searchInteractor, times(0)).sendNewQuery(eq(TEST_SEARCH_STRING), eq(2));
+    }
+
+    @Test
+    public void testIsLoadingPhotos() {
+        searchPresenter.onSearchCompleted(TEST_SEARCH_STRING);
+        testRelay.accept(getTestPhotos());
+        testRelay.accept(getTestPhotos());
+        assertTrue(!searchPresenter.isLoadingPhotos());
+        searchPresenter.onLoadMorePhotos();
+        assertTrue(searchPresenter.isLoadingPhotos());
+    }
+
+    @Test
+    public void testHasLoadedAllItems() {
+        Photos photos = getTestPhotos();
+        photos.setTotal(25);
+        testRelay.accept(photos);
+        assertTrue(searchPresenter.hasLoadedAllItems());
+    }
+
+    @Test
+    public void testHasNotLoadedAllItems() {
+        Photos photos = getTestPhotos();
+        photos.setTotal(26);
+        testRelay.accept(photos);
+        assertTrue(!searchPresenter.hasLoadedAllItems());
     }
 
     @Test
