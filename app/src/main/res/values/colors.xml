@@ -10,4 +10,5 @@
     <color name="divider">#BDBDBD</color>
     <color name="darkBackground">#353535</color>
     <color name="search_item_background">#404040</color>
+    <color name="translucent_background">#dd000000</color>
 </resources>

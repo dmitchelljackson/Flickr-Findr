@@ -2,6 +2,7 @@ package com.example.danieljackson.flickr_findr.ui.search;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import com.androidadvance.topsnackbar.TSnackbar;
 import com.example.danieljackson.flickr_findr.FlickrFindrApp;
 import com.example.danieljackson.flickr_findr.R;
+import com.example.danieljackson.flickr_findr.data.interactor.search.SearchInteractorImpl;
 import com.example.danieljackson.flickr_findr.data.network.model.Photo;
 import com.example.danieljackson.flickr_findr.data.network.model.Photos;
 import com.example.danieljackson.flickr_findr.system.SystemLogger;
@@ -25,6 +27,7 @@ import com.example.danieljackson.flickr_findr.ui.BaseFragment;
 import com.example.danieljackson.flickr_findr.ui.Router;
 import com.example.danieljackson.flickr_findr.ui.search.presenter.SearchPresenter;
 import com.metova.slim.annotation.Layout;
+import com.paginate.Paginate;
 
 import javax.inject.Inject;
 
@@ -55,6 +58,10 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
 
     PhotosAdapter photosAdapter;
 
+    Paginate paginate;
+
+    Parcelable gridLayoutState;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,13 +75,14 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
 
         ((BaseActivity) getActivity()).setSupportActionBar(toolbar);
 
-        initRecyclerView();
+        initRecyclerView(savedInstanceState);
         initSearchView(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(String.valueOf(R.id.search_view), searchView.getQuery().toString());
+        outState.putParcelable(String.valueOf(R.id.list), gridLayoutManager.onSaveInstanceState());
         super.onSaveInstanceState(outState);
     }
 
@@ -85,6 +93,9 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
     }
 
     private void initSearchView(Bundle bundle) {
+        searchView.setFocusable(false);
+        searchView.setIconified(false);
+        searchView.clearFocus();
 
         if (bundle != null) {
             String previousQuery = bundle.getString(String.valueOf(R.id.search_view));
@@ -94,11 +105,6 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
                 searchView.setQuery(previousQuery, false);
             }
         }
-
-        searchView.setQueryHint(getActivity().getString(R.string.search_images));
-        searchView.setIconified(false);
-        searchView.setOnCloseListener(() -> true);
-
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -116,7 +122,7 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
         });
     }
 
-    private void initRecyclerView() {
+    private void initRecyclerView(Bundle bundle) {
         photosAdapter = new PhotosAdapter((Router) getActivity());
 
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -129,9 +135,34 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
                         int dpWidthPerItem = recyclerView.getMeasuredWidth() / numberOfElementsPerRow;
 
                         gridLayoutManager = new GridLayoutManager(getActivity(), numberOfElementsPerRow);
+
+                        if (bundle != null) {
+                            gridLayoutState = bundle.getParcelable(String.valueOf(R.id.list));
+                        }
+
                         photosAdapter.setLayoutParams(new ViewGroup.LayoutParams(dpWidthPerItem, dpWidthPerItem));
                         recyclerView.setLayoutManager(gridLayoutManager);
                         recyclerView.setAdapter(photosAdapter);
+
+                        paginate = Paginate.with(recyclerView, new Paginate.Callbacks() {
+                            @Override
+                            public void onLoadMore() {
+                                searchPresenter.onLoadMorePhotos();
+                            }
+
+                            @Override
+                            public boolean isLoading() {
+                                return searchPresenter.isLoadingPhotos();
+                            }
+
+                            @Override
+                            public boolean hasLoadedAllItems() {
+                                return searchPresenter.hasLoadedAllItems();
+                            }
+                        }).setLoadingTriggerThreshold(SearchInteractorImpl.ITEMS_PER_PAGE)
+                                .addLoadingListItem(false)
+                                .build();
+
                         searchPresenter.start(SearchFragment.this);
                     }
                 });
@@ -146,6 +177,11 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
         systemLogger.d(TAG, "Showing new photos");
         photosAdapter.setPhotoList(photos);
         recyclerView.setVisibility(View.VISIBLE);
+
+        if (gridLayoutState != null) {
+            gridLayoutManager.onRestoreInstanceState(gridLayoutState);
+            gridLayoutState = null;
+        }
     }
 
     public void showEmptyResults() {
@@ -164,6 +200,12 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
     public void setDefaultState() {
         systemLogger.d(TAG, "Showing Default State");
         recyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    public void clearFocus() {
+        if (searchView != null) {
+            searchView.clearFocus();
+        }
     }
 
     private void closeKeyboard(View view) {

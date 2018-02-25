@@ -110,11 +110,11 @@ public class MainActivityTest extends BaseTestCase {
     }
 
     public static Photos getTestPhotos() {
-        return new Photos(TEST_PAGE_NUMBER, TEST_NUMBER_PERPAGE, TEST_TOTAL_NUMBER, TEST_SEARCH_STRING, getTestPhotoList());
+        return new Photos(TEST_PAGE_NUMBER, TEST_NUMBER_PERPAGE, TEST_TOTAL_NUMBER, getTestPhotoList());
     }
 
     public static Photos getTestPhotosTwo() {
-        return new Photos(TEST_PAGE_NUMBER, TEST_NUMBER_PERPAGE, TEST_TOTAL_NUMBER, TEST_SEARCH_STRING_ALTERNATE, getTestPhotoList());
+        return new Photos(TEST_PAGE_NUMBER, TEST_NUMBER_PERPAGE, TEST_TOTAL_NUMBER, getTestPhotoList());
     }
 
     private static List<Photo> getTestPhotoList() {

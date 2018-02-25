@@ -6,7 +6,7 @@ import com.jakewharton.rxrelay2.Relay;
 
 public interface SearchInteractor {
 
-    void sendNewQuery(String searchString);
+    void sendNewQuery(String searchString, int page);
     
     Relay<Photos> getPhotoStream();
 

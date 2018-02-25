@@ -36,7 +36,7 @@ public class SearchInteractorImpl implements SearchInteractor {
     }
 
     @Override
-    public void sendNewQuery(String text) {
+    public void sendNewQuery(String text, int page) {
         cancelCurrentSearch();
 
         DisposableSubscriber subscriber = new DisposableSubscriber<Photos>() {
@@ -60,7 +60,7 @@ public class SearchInteractorImpl implements SearchInteractor {
 
         disposable = subscriber;
 
-        flickrApi.getTextSearchResults(text, 1, ITEMS_PER_PAGE)
+        flickrApi.getTextSearchResults(text, page, ITEMS_PER_PAGE)
                 .map(PhotoResponse::getPhotos)
                 .subscribeOn(scheduler)
                 .subscribe(subscriber);

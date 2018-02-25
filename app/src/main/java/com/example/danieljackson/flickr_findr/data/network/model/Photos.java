@@ -15,13 +15,11 @@ public class Photos {
 
     private int total;
 
-    private String searchString = "";
-
     @SerializedName("photo")
     private List<Photo> photos;
 
     public Photos() {
-        this(-1, 0, 0, "", new ArrayList<>());
+        this(-1, 0, 0, new ArrayList<>());
     }
 
     public Photos(boolean loadError) {
@@ -29,11 +27,10 @@ public class Photos {
         this.loadError = loadError;
     }
 
-    public Photos(int page, int perpage, int total, String searchString, List<Photo> photos) {
+    public Photos(int page, int perpage, int total, List<Photo> photos) {
         this.page = page;
         this.perpage = perpage;
         this.total = total;
-        this.searchString = searchString;
         this.photos = photos;
     }
 
@@ -53,20 +50,16 @@ public class Photos {
         return photos;
     }
 
-    public String getSearchString() {
-        return searchString;
-    }
-
-    public void setSearchString(String searchString) {
-        this.searchString = searchString;
-    }
-
     public boolean isLoadError() {
         return loadError;
     }
 
     public void setLoadError(boolean loadError) {
         this.loadError = loadError;
+    }
+
+    public void setPhotos(List<Photo> photos) {
+        this.photos = photos;
     }
 
     @Override
@@ -80,8 +73,7 @@ public class Photos {
         if (page != photos1.page) return false;
         if (perpage != photos1.perpage) return false;
         if (total != photos1.total) return false;
-        if (searchString != null ? !searchString.equals(photos1.searchString) : photos1.searchString != null)
-            return false;
+
         return photos != null ? photos.equals(photos1.photos) : photos1.photos == null;
     }
 
@@ -91,7 +83,6 @@ public class Photos {
         result = 31 * result + page;
         result = 31 * result + perpage;
         result = 31 * result + total;
-        result = 31 * result + (searchString != null ? searchString.hashCode() : 0);
         result = 31 * result + (photos != null ? photos.hashCode() : 0);
         return result;
     }

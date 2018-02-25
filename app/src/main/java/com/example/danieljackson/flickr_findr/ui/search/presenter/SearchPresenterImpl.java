@@ -7,10 +7,13 @@ import com.example.danieljackson.flickr_findr.system.SystemLogger;
 import javax.inject.Inject;
 
 import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
 
 public class SearchPresenterImpl implements SearchPresenter {
 
     private static final String TAG = SearchPresenterImpl.class.getSimpleName();
+
+    private static final int TOTAL_PAGES_UNDEFINED = Integer.MAX_VALUE;
 
     private SearchInteractor searchInteractor;
 
@@ -19,6 +22,16 @@ public class SearchPresenterImpl implements SearchPresenter {
     private Scheduler mainScheduler;
 
     private Callback callback;
+
+    private int currentPage;
+
+    private int totalPagesInQuery;
+
+    private String currentQuery;
+
+    private boolean isLoading;
+
+    private Disposable disposable;
 
     @Inject
     public SearchPresenterImpl(SearchInteractor searchInteractor, SystemLogger systemLogger, Scheduler mainScheduler) {
@@ -33,7 +46,16 @@ public class SearchPresenterImpl implements SearchPresenter {
         systemLogger.d(TAG, "Starting Presenter");
         this.callback = callback;
 
-        searchInteractor.getPhotoStream().observeOn(mainScheduler).subscribe(photos -> {
+        disposable = searchInteractor.getPhotoStream().scan((lastPhotos, photos) -> {
+            if (lastPhotos.getPage() + 1 == photos.getPage()) {
+                lastPhotos.getPhotos().addAll(photos.getPhotos());
+                photos.setPhotos(lastPhotos.getPhotos());
+            }
+            return photos;
+        }).observeOn(mainScheduler).subscribe(photos -> {
+            currentPage = photos.getPage();
+            totalPagesInQuery = photos.getTotal();
+            isLoading = false;
             if (photos.isLoadError()) {
                 this.callback.showLoadError();
             } else if (photos.getPhotos().isEmpty()) {
@@ -48,14 +70,23 @@ public class SearchPresenterImpl implements SearchPresenter {
     public void stop() {
         systemLogger.d(TAG, "Stopping Presenter");
         this.callback = new EmptyCallback();
+
+        if (disposable != null) {
+            disposable.dispose();
+            disposable = null;
+        }
     }
 
     @Override
     public void onSearchUpdated(String searchText) {
-
         if (!searchText.isEmpty()) {
+            currentPage = 1;
+            isLoading = true;
+            totalPagesInQuery = TOTAL_PAGES_UNDEFINED;
+            currentQuery = searchText;
+
             callback.setLoading();
-            searchInteractor.sendNewQuery(searchText);
+            searchInteractor.sendNewQuery(searchText, currentPage);
         } else {
             searchInteractor.cancelCurrentSearch();
             callback.setDefaultState();
@@ -65,6 +96,23 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Override
     public void onSearchCompleted(String searchText) {
         onSearchUpdated(searchText);
+    }
+
+    @Override
+    public void onLoadMorePhotos() {
+        if (!isLoading) {
+            searchInteractor.sendNewQuery(currentQuery, currentPage + 1);
+        }
+    }
+
+    @Override
+    public boolean isLoadingPhotos() {
+        return isLoading;
+    }
+
+    @Override
+    public boolean hasLoadedAllItems() {
+        return currentPage >= totalPagesInQuery;
     }
 
     private class EmptyCallback implements SearchPresenter.Callback {

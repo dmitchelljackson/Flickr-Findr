@@ -1,11 +1,10 @@
 package com.example.danieljackson.flickr_findr.data.network.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
-public class Photo implements Parcelable {
+import java.io.Serializable;
+
+public class Photo implements Serializable {
 
     //as per https://www.flickr.com/services/api/misc.urls.html
     public static final float THUMBNAIL_SIZE_PX = 240f;
@@ -68,36 +67,4 @@ public class Photo implements Parcelable {
         return result;
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.title);
-        dest.writeString(this.thumbNailUrl);
-        dest.writeString(this.mediumUrl);
-        dest.writeString(this.fullSizedUrl);
-    }
-
-    protected Photo(Parcel in) {
-        this.title = in.readString();
-        this.thumbNailUrl = in.readString();
-        this.mediumUrl = in.readString();
-        this.fullSizedUrl = in.readString();
-    }
-
-    public static final Parcelable.Creator<Photo> CREATOR = new Parcelable.Creator<Photo>() {
-        @Override
-        public Photo createFromParcel(Parcel source) {
-            return new Photo(source);
-        }
-
-        @Override
-        public Photo[] newArray(int size) {
-            return new Photo[size];
-        }
-    };
 }

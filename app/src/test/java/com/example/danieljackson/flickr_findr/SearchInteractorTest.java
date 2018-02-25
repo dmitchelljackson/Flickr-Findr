@@ -27,7 +27,8 @@ import static org.mockito.Mockito.when;
 
 public class SearchInteractorTest {
 
-    private static final int TEST_PAGE_NUMBER = 0;
+    public static final int TEST_PAGE_NUMBER_ONE = 1;
+    public static final int TEST_PAGE_NUMBER_TWO = 2;
     private static final int TEST_NUMBER_PERPAGE = 25;
     private static final int TEST_TOTAL_NUMBER = 100;
 
@@ -50,6 +51,8 @@ public class SearchInteractorTest {
         flickrApi = Mockito.mock(FlickrApi.class);
         testScheduler = new TestScheduler();
         searchInteractor = new SearchInteractorImpl(flickrApi, new JavaSystemLogger(), testScheduler);
+        when(flickrApi.getTextSearchResults(eq(TEST_SEARCH_STRING), eq(TEST_PAGE_NUMBER_TWO), eq(ITEMS_PER_PAGE))).thenThrow(new RuntimeException());
+        when(flickrApi.getTextSearchResults(eq(TEST_SEARCH_STRING_ALTERNATE), eq(TEST_PAGE_NUMBER_TWO), eq(ITEMS_PER_PAGE))).thenThrow(new RuntimeException());
     }
 
     @Test
@@ -57,7 +60,7 @@ public class SearchInteractorTest {
         when(flickrApi.getTextSearchResults(eq(TEST_SEARCH_STRING), eq(PAGE_TO_SEARCH), eq(ITEMS_PER_PAGE))).thenReturn(getSuccessfulStream());
         TestObserver<Photos> testSubscriber = searchInteractor.getPhotoStream().test();
 
-        searchInteractor.sendNewQuery(TEST_SEARCH_STRING);
+        searchInteractor.sendNewQuery(TEST_SEARCH_STRING, TEST_PAGE_NUMBER_ONE);
 
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
@@ -73,10 +76,10 @@ public class SearchInteractorTest {
         when(flickrApi.getTextSearchResults(eq(TEST_SEARCH_STRING_ALTERNATE), eq(PAGE_TO_SEARCH), eq(ITEMS_PER_PAGE))).thenReturn(getSuccessfulStreamTwo());
         TestObserver<Photos> testSubscriber = searchInteractor.getPhotoStream().test();
 
-        searchInteractor.sendNewQuery(TEST_SEARCH_STRING);
+        searchInteractor.sendNewQuery(TEST_SEARCH_STRING, TEST_PAGE_NUMBER_ONE);
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
-        searchInteractor.sendNewQuery(TEST_SEARCH_STRING_ALTERNATE);
+        searchInteractor.sendNewQuery(TEST_SEARCH_STRING_ALTERNATE, TEST_PAGE_NUMBER_ONE);
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
         testSubscriber.assertValueSequence(Arrays.asList(getTestPhotos(), getTestPhotosTwo()));
@@ -90,8 +93,8 @@ public class SearchInteractorTest {
         when(flickrApi.getTextSearchResults(eq(TEST_SEARCH_STRING_ALTERNATE), eq(PAGE_TO_SEARCH), eq(ITEMS_PER_PAGE))).thenReturn(getSuccessfulStream());
         TestObserver<Photos> testSubscriber = searchInteractor.getPhotoStream().test();
 
-        searchInteractor.sendNewQuery(TEST_SEARCH_STRING);
-        searchInteractor.sendNewQuery(TEST_SEARCH_STRING_ALTERNATE);
+        searchInteractor.sendNewQuery(TEST_SEARCH_STRING, TEST_PAGE_NUMBER_ONE);
+        searchInteractor.sendNewQuery(TEST_SEARCH_STRING_ALTERNATE, TEST_PAGE_NUMBER_ONE);
 
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
@@ -105,7 +108,7 @@ public class SearchInteractorTest {
         when(flickrApi.getTextSearchResults(eq(TEST_SEARCH_STRING), eq(PAGE_TO_SEARCH), eq(ITEMS_PER_PAGE))).thenReturn(Flowable.error(new RuntimeException()));
         TestObserver<Photos> testSubscriber = searchInteractor.getPhotoStream().test();
 
-        searchInteractor.sendNewQuery(TEST_SEARCH_STRING);
+        searchInteractor.sendNewQuery(TEST_SEARCH_STRING, TEST_PAGE_NUMBER_ONE);
 
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
@@ -119,7 +122,7 @@ public class SearchInteractorTest {
         when(flickrApi.getTextSearchResults(eq(TEST_SEARCH_STRING),  eq(PAGE_TO_SEARCH), eq(ITEMS_PER_PAGE))).thenReturn(Flowable.empty());
         TestObserver<Photos> testSubscriber = searchInteractor.getPhotoStream().test();
 
-        searchInteractor.sendNewQuery(TEST_SEARCH_STRING);
+        searchInteractor.sendNewQuery(TEST_SEARCH_STRING, TEST_PAGE_NUMBER_ONE);
 
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
 
@@ -133,7 +136,7 @@ public class SearchInteractorTest {
         when(flickrApi.getTextSearchResults(eq(TEST_SEARCH_STRING), eq(PAGE_TO_SEARCH), eq(ITEMS_PER_PAGE))).thenReturn(getSuccessfulStream());
         TestObserver<Photos> testSubscriber = searchInteractor.getPhotoStream().test();
 
-        searchInteractor.sendNewQuery(TEST_SEARCH_STRING);
+        searchInteractor.sendNewQuery(TEST_SEARCH_STRING, TEST_PAGE_NUMBER_ONE);
         searchInteractor.cancelCurrentSearch();
 
         testScheduler.advanceTimeBy(5, TimeUnit.SECONDS);
@@ -153,11 +156,11 @@ public class SearchInteractorTest {
     }
 
     public static Photos getTestPhotos() {
-        return new Photos(TEST_PAGE_NUMBER, TEST_NUMBER_PERPAGE, TEST_TOTAL_NUMBER, TEST_SEARCH_STRING, getTestPhotoList());
+        return new Photos(TEST_PAGE_NUMBER_ONE, TEST_NUMBER_PERPAGE, TEST_TOTAL_NUMBER, getTestPhotoList());
     }
 
     public static Photos getTestPhotosTwo() {
-        return new Photos(TEST_PAGE_NUMBER, TEST_NUMBER_PERPAGE, TEST_TOTAL_NUMBER, TEST_SEARCH_STRING_ALTERNATE, getTestPhotoList());
+        return new Photos(TEST_PAGE_NUMBER_ONE, TEST_NUMBER_PERPAGE, TEST_TOTAL_NUMBER, getTestPhotoList());
     }
 
     private static List<Photo> getTestPhotoList() {

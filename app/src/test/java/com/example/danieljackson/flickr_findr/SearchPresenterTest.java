@@ -42,14 +42,14 @@ public class SearchPresenterTest {
     @Test
     public void testOnSearchUpdatedHasText() {
         searchPresenter.onSearchUpdated(TEST_SEARCH_STRING);
-        verify(searchInteractor).sendNewQuery(eq(TEST_SEARCH_STRING));
+        verify(searchInteractor).sendNewQuery(eq(TEST_SEARCH_STRING), eq(SearchInteractorTest.TEST_PAGE_NUMBER_ONE));
         verify(callback).setLoading();
     }
 
     @Test
     public void testOnSearchUpdatedHasNoText() {
         searchPresenter.onSearchUpdated("");
-        verify(searchInteractor, times(0)).sendNewQuery(eq(TEST_SEARCH_STRING));
+        verify(searchInteractor, times(0)).sendNewQuery(eq(TEST_SEARCH_STRING), eq(SearchInteractorTest.TEST_PAGE_NUMBER_ONE));
         verify(searchInteractor).cancelCurrentSearch();
         verify(callback).setDefaultState();
     }
@@ -57,14 +57,14 @@ public class SearchPresenterTest {
     @Test
     public void testOnSearchCompletedHasText() {
         searchPresenter.onSearchCompleted(TEST_SEARCH_STRING);
-        verify(searchInteractor).sendNewQuery(eq(TEST_SEARCH_STRING));
+        verify(searchInteractor).sendNewQuery(eq(TEST_SEARCH_STRING), eq(SearchInteractorTest.TEST_PAGE_NUMBER_ONE));
         verify(callback).setLoading();
     }
 
     @Test
     public void testOnSearchCompletedHasNoText() {
         searchPresenter.onSearchCompleted("");
-        verify(searchInteractor, times(0)).sendNewQuery(eq(TEST_SEARCH_STRING));
+        verify(searchInteractor, times(0)).sendNewQuery(eq(TEST_SEARCH_STRING), eq(SearchInteractorTest.TEST_PAGE_NUMBER_ONE));
         verify(searchInteractor).cancelCurrentSearch();
         verify(callback).setDefaultState();
     }

@@ -45,8 +45,12 @@ public class MainActivity extends BaseActivity implements Router {
 
     @Override
     public void loadPhotoViewerFragment(Photo photo) {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(SearchFragment.TAG);
+        if(fragment != null && fragment instanceof SearchFragment) {
+            ((SearchFragment) fragment).clearFocus();
+        }
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frame, PhotoViewerFragment.newInstance(photo), PhotoViewerFragment.TAG)
+                .add(R.id.frame, PhotoViewerFragment.newInstance(photo), PhotoViewerFragment.TAG)
                 .addToBackStack(photo.getTitle())
                 .commit();
     }

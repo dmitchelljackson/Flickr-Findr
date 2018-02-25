@@ -12,6 +12,12 @@ public interface SearchPresenter {
 
     void onSearchCompleted(String searchText);
 
+    void onLoadMorePhotos();
+
+    boolean isLoadingPhotos();
+
+    boolean hasLoadedAllItems();
+
     interface Callback {
         void setLoading();
 

@@ -46,7 +46,7 @@ public class PhotoViewerFragment extends BaseFragment {
     public static PhotoViewerFragment newInstance(Photo photo) {
         PhotoViewerFragment fragment = new PhotoViewerFragment();
         Bundle args = new Bundle();
-        args.putParcelable(PHOTO_EXTRA, photo);
+        args.putSerializable(PHOTO_EXTRA, photo);
         fragment.setArguments(args);
         return fragment;
     }
