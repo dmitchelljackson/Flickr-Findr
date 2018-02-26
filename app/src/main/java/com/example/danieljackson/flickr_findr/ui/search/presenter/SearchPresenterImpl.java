@@ -86,11 +86,11 @@ public class SearchPresenterImpl implements SearchPresenter {
     @Override
     public void onSearchUpdated(String searchText) {
         if(!searchText.equals(currentQuery)) {
+            currentQuery = searchText;
             if (!searchText.isEmpty()) {
                 currentPage = 1;
                 isLoading = true;
                 totalPagesInQuery = TOTAL_PAGES_UNDEFINED;
-                currentQuery = searchText;
 
                 callback.setLoading();
                 searchInteractor.sendNewQuery(searchText, currentPage);
