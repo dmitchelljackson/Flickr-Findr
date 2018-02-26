@@ -215,6 +215,8 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
     @Override
     public void onNewQueryReceived(String query) {
         searchView.setQuery(query, false);
+        searchView.clearFocus();
+        closeKeyboard(searchView);
         searchPresenter.onSearchCompleted(query);
     }
 
