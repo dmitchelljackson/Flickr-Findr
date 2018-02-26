@@ -14,6 +14,10 @@ public class AppComponentHolder {
         return appComponentHolder;
     }
 
+    public static AppComponentHolder getAppComponentHolder() {
+        return appComponentHolder;
+    }
+
     private AppComponentHolder(AppComponent appComponent) {
         this.appComponent = appComponent;
     }

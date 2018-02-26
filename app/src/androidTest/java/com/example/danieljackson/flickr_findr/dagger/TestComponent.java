@@ -1,11 +1,14 @@
 package com.example.danieljackson.flickr_findr.dagger;
 
-import com.example.danieljackson.flickr_findr.ExampleInstrumentedTest;
+import com.example.danieljackson.flickr_findr.MainActivityTest;
+
+import javax.inject.Singleton;
 
 import dagger.Component;
 
-@Component(modules = {DataModule.class, PresenterModule.class})
+@Singleton
+@Component(modules = {DataModule.class, PresenterModule.class, SystemModule.class})
 public interface TestComponent extends AppComponent {
 
-    void inject(ExampleInstrumentedTest exampleInstrumentedTest);
+    void inject(MainActivityTest searchActivityTest);
 }
