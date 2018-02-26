@@ -85,17 +85,21 @@ public class SearchPresenterImpl implements SearchPresenter {
 
     @Override
     public void onSearchUpdated(String searchText) {
-        if (!searchText.isEmpty()) {
-            currentPage = 1;
-            isLoading = true;
-            totalPagesInQuery = TOTAL_PAGES_UNDEFINED;
-            currentQuery = searchText;
+        if(!searchText.equals(currentQuery)) {
+            if (!searchText.isEmpty()) {
+                currentPage = 1;
+                isLoading = true;
+                totalPagesInQuery = TOTAL_PAGES_UNDEFINED;
+                currentQuery = searchText;
 
-            callback.setLoading();
-            searchInteractor.sendNewQuery(searchText, currentPage);
+                callback.setLoading();
+                searchInteractor.sendNewQuery(searchText, currentPage);
+            } else {
+                searchInteractor.cancelCurrentSearch();
+                callback.setDefaultState();
+            }
         } else {
-            searchInteractor.cancelCurrentSearch();
-            callback.setDefaultState();
+            systemLogger.i(TAG, "Query: " + searchText + " is already the current search.");
         }
     }
 

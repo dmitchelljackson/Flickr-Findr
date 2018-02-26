@@ -1,5 +1,6 @@
 package com.example.danieljackson.flickr_findr.ui.search;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -35,7 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 @Layout(R.layout.fragment_search)
-public class SearchFragment extends BaseFragment implements SearchPresenter.Callback {
+public class SearchFragment extends BaseFragment implements SearchPresenter.Callback, SuggestionDelegate.Callback {
 
     public static final String TAG = SearchFragment.class.getSimpleName();
 
@@ -97,6 +98,9 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
         searchView.setIconified(false);
         searchView.clearFocus();
 
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+
         if (bundle != null) {
             String previousQuery = bundle.getString(String.valueOf(R.id.search_view));
             if (previousQuery == null || previousQuery.isEmpty()) {
@@ -111,13 +115,13 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
             public boolean onQueryTextSubmit(String query) {
                 searchPresenter.onSearchCompleted(query);
                 closeKeyboard(searchView);
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 searchPresenter.onSearchUpdated(newText);
-                return false;
+                return true;
             }
         });
     }
@@ -206,6 +210,12 @@ public class SearchFragment extends BaseFragment implements SearchPresenter.Call
         if (searchView != null) {
             searchView.clearFocus();
         }
+    }
+
+    @Override
+    public void onNewQueryReceived(String query) {
+        searchView.setQuery(query, false);
+        searchPresenter.onSearchCompleted(query);
     }
 
     private void closeKeyboard(View view) {

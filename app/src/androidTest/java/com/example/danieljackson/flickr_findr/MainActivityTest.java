@@ -10,6 +10,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.example.danieljackson.flickr_findr.data.network.model.Photo;
 import com.example.danieljackson.flickr_findr.data.network.model.Photos;
 import com.example.danieljackson.flickr_findr.ui.MainActivity;
+import com.example.danieljackson.flickr_findr.ui.search.SuggestionDelegate;
 import com.example.danieljackson.flickr_findr.ui.search.presenter.SearchPresenter;
 
 import org.junit.Before;
@@ -40,9 +41,6 @@ public class MainActivityTest extends BaseTestCase {
     private static final int TEST_NUMBER_PERPAGE = 25;
     private static final int TEST_TOTAL_NUMBER = 100;
 
-    public static final String TEST_SEARCH_STRING = "search";
-    private static final String TEST_SEARCH_STRING_ALTERNATE = "alternate";
-
     private static final String TEST_PHOTO_TITLE = "title";
     private static final String TEST_PHOTO_THUMBNAIL_URL = "thumb";
     private static final String TEST_MEDUIM_URL = "medium";
@@ -53,9 +51,12 @@ public class MainActivityTest extends BaseTestCase {
     @Inject
     SearchPresenter searchPresenter;
 
+    @Inject
+    SuggestionDelegate suggestionDelegate;
+
     @Rule
     public ActivityTestRule<MainActivity> activityRule =
-            new ActivityTestRule(MainActivity.class, false,false);
+            new ActivityTestRule(MainActivity.class, false, false);
 
     @Before
     public void setUp() {
@@ -130,7 +131,7 @@ public class MainActivityTest extends BaseTestCase {
         List<Photo> photos = new ArrayList<>();
         int listCount = 3;
 
-        for(int i = 0; i < listCount; i++) {
+        for (int i = 0; i < listCount; i++) {
             photos.add(new Photo(TEST_PHOTO_TITLE + i, TEST_PHOTO_THUMBNAIL_URL + i, TEST_MEDUIM_URL, TEST_PHOTO_URL + i));
         }
 
